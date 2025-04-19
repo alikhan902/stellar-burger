@@ -1,0 +1,13 @@
+.list {
+  max-height: 66vh;
+  padding: 0;
+  list-style-type: none;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+@media (width<768px) {
+  .list {
+    margin: 0;
+  }
+}

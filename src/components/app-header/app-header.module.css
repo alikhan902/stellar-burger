@@ -1,0 +1,32 @@
+.header {
+  width: 100%;
+  background-color: var(--background);
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  transform: translate(-50%, -50%);
+}
+
+@media (width < 1200px) {
+  .logo {
+    position: static;
+    transform: none;
+  }
+
+  .wrapper {
+    box-sizing: border-box;
+    justify-content: space-between;
+    padding: 12px 8px;
+  }
+}

@@ -1,54 +1,34 @@
-import { FC, SyntheticEvent } from 'react';
+import React from 'react';
+import styles from './profile.module.css';
+import ProfileTabs from '@/components/profile-tabs/profile-tabs';
+import { Outlet, useMatch } from 'react-router-dom';
+import { useResize } from '@/hooks/useResize';
 
-export const Profile: FC = () => {
-  // const [formValue, setFormValue] = useState({
-  //   name: user.name,
-  //   email: user.email,
-  //   password: ''
-  // });
+function Profile() {
+  const { isMobile } = useResize();
 
-  // useEffect(() => {
-  //   setFormValue((prevState) => ({
-  //     ...prevState,
-  //     name: user?.name || '',
-  //     email: user?.email || ''
-  //   }));
-  // }, [user]);
+  const profileMatch = useMatch('/profile');
 
-  // const isFormChanged =
-  //   formValue.name !== user?.name ||
-  //   formValue.email !== user?.email ||
-  //   !!formValue.password;
+  return (
+    <main className="container">
+      <div className={styles.main}>
+        {isMobile ? (
+          <h1 className="pl-2 pr-2 pt-4 pb-6 text text_type_main-medium">
+            {profileMatch ? 'Профиль' : 'История заказов'}
+          </h1>
+        ) : (
+          <div className={`${styles.nav} ml-5 mt-30`}>
+            <ProfileTabs />
+            <span className={`${styles.text} text text_type_main-small text_color_inactive`}>
+              В этом разделе вы можете <br />
+              изменить свои персональные данные
+            </span>
+          </div>
+        )}
+        <Outlet />
+      </div>
+    </main>
+  );
+}
 
-  const handleSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-  };
-
-  const handleCancel = (e: SyntheticEvent) => {
-    e.preventDefault();
-    // setFormValue({
-    //   name: user.name,
-    //   email: user.email,
-    //   password: ''
-    // });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setFormValue((prevState) => ({
-    //   ...prevState,
-    //   [e.target.name]: e.target.value
-    // }));
-  };
-
-  // return (
-  //   <ProfileUI
-  //     formValue={formValue}
-  //     isFormChanged={isFormChanged}
-  //     handleCancel={handleCancel}
-  //     handleSubmit={handleSubmit}
-  //     handleInputChange={handleInputChange}
-  //   />
-  // );
-
-  return null;
-};
+export default Profile;

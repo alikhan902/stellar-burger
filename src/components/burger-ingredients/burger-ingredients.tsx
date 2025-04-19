@@ -1,62 +1,65 @@
-import { useState, useRef, useEffect, FC } from 'react';
-import { useInView } from 'react-intersection-observer';
+import React, { useEffect, useRef, useState } from 'react';
+import Tabs from './tabs/tabs';
+import Ingredients from './ingredients/ingredients';
+import { BUNS } from '@/utils/tabs-config';
+import useStatus from '@/hooks/useStatus';
+import Preloader from '../preloader/preloader';
+import { errorIngredients, statusIngredients } from '@/services/initial-ingredients/selectors';
+import { getIngredients } from '@/services/initial-ingredients/initial-ingredients-slice';
+import { toast } from 'react-toastify';
+import { loadState } from '@/localstorage';
+import { useResize } from '@/hooks/useResize';
+import styles from './burger-ingredients.module.css';
+import { useAppDispatch, useAppSelector } from '@/redux-hooks';
 
-import { TTabMode } from '@utils-types';
+function BurgerIngredients() {
+  const [activeTab, setActiveTab] = useState<string>(BUNS);
+  const status = useAppSelector(statusIngredients);
+  const error = useAppSelector(errorIngredients);
+  const { isMobile } = useResize();
 
-export const BurgerIngredients: FC = () => {
-  const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
-  const titleBunRef = useRef<HTMLHeadingElement>(null);
-  const titleMainRef = useRef<HTMLHeadingElement>(null);
-  const titleSaucesRef = useRef<HTMLHeadingElement>(null);
-
-  const [bunsRef, inViewBuns] = useInView({
-    threshold: 0
-  });
-
-  const [mainsRef, inViewFilling] = useInView({
-    threshold: 0
-  });
-
-  const [saucesRef, inViewSauces] = useInView({
-    threshold: 0
-  });
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (inViewBuns) {
-      setCurrentTab('bun');
-    } else if (inViewSauces) {
-      setCurrentTab('sauce');
-    } else if (inViewFilling) {
-      setCurrentTab('main');
+    if (loadState() === undefined || error) {
+      dispatch(getIngredients())
+        .unwrap()
+        .catch((err: unknown) => {
+          if (err instanceof Error) {
+            toast.error(err.message);
+          }
+        });
     }
-  }, [inViewBuns, inViewFilling, inViewSauces]);
+  }, [dispatch, error]);
 
-  /* В можно лучше: скролл к разделу при клике на таб */
-  const onTabClick = (tab: string) => {
-    setCurrentTab(tab as TTabMode);
-    if (tab === 'bun')
-      titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'main')
-      titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (tab === 'sauce')
-      titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const handleTab = (tabName: string) => {
+    setActiveTab(tabName);
   };
+  const tabsRef = useRef<HTMLDivElement>(null);
 
-  // return (
-  //   <BurgerIngredientsUI
-  //     currentTab={currentTab}
-  //     buns={buns}
-  //     mains={mains}
-  //     sauces={sauces}
-  //     titleBunRef={titleBunRef}
-  //     titleMainRef={titleMainRef}
-  //     titleSaucesRef={titleSaucesRef}
-  //     bunsRef={bunsRef}
-  //     mainsRef={mainsRef}
-  //     saucesRef={saucesRef}
-  //     onTabClick={onTabClick}
-  //   />
-  // );
+  const content = useStatus({
+    loading: (
+      <div className="mt-30">
+        <Preloader />
+      </div>
+    ),
+    content: <Ingredients tabsRef={tabsRef} handleTab={handleTab} activeTab={activeTab} />,
+    status,
+  });
 
-  return null;
-};
+  return (
+    <section>
+      <h1
+        className={`text text_type_main-large ${styles.title} ${
+          isMobile ? 'pt-4 pb-2' : 'pt-10 pb-5'
+        }`}
+      >
+        Соберите бургер
+      </h1>
+      <Tabs ref={tabsRef} handleTab={handleTab} activeTab={activeTab} />
+      {content}
+    </section>
+  );
+}
+
+export default BurgerIngredients;

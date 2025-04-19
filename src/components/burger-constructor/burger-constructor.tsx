@@ -1,36 +1,17 @@
-import { FC, useMemo } from 'react';
-import { TConstructorIngredient } from '@utils-types';
-import { BurgerConstructorUI } from '@ui';
+import React from 'react';
+import BurgerComponents from './burger-components/burger-components';
+import BurgerOrder from './burger-order/burger-order';
+import { useResize } from '@/hooks/useResize';
 
-export const BurgerConstructor: FC = () =>
-  // const onOrderClick = () => {
-  // if (!user) {
-  //   navigate('/login');
-  //   return;
-  // }
-  // if (!constructorItems.bun || orderRequest) return;
-  // };
-  // const closeOrderModal = () => {};
+function BurgerConstructor() {
+  const { isMobile } = useResize();
 
-  // const price = useMemo(
-  //   () =>
-  //     (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
-  //     constructorItems.ingredients.reduce(
-  //       (s: number, v: TConstructorIngredient) => s + v.price,
-  //       0
-  //     ),
-  //   [constructorItems]
-  // );
+  return (
+    <section className={`${isMobile ? 'pl-2' : 'pt-25 pl-4'}`}>
+      <BurgerComponents />
+      <BurgerOrder />
+    </section>
+  );
+}
 
-  // return (
-  //   <BurgerConstructorUI
-  //     price={price}
-  //     orderRequest={orderRequest}
-  //     constructorItems={constructorItems}
-  //     orderModalData={orderModalData}
-  //     onOrderClick={onOrderClick}
-  //     closeOrderModal={closeOrderModal}
-  //   />
-  // );
-
-  null;
+export default BurgerConstructor;

@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  width: 100%;
+  max-width: 480px;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (width < 768px) {
+  .form {
+    align-items: center;
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 32px;
+  }
+}

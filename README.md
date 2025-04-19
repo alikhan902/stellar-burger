@@ -1,19 +1,41 @@
-# Проектная работа 11-го спринта
+# Stellar Burgers
 
-[Макет](<https://www.figma.com/file/vIywAvqfkOIRWGOkfOnReY/React-Fullstack_-Проектные-задачи-(3-месяца)_external_link?type=design&node-id=0-1&mode=design>)
+Данный проект содержит:
 
-[Чеклист](https://www.notion.so/praktikum/0527c10b723d4873aa75686bad54b32e?pvs=4)
+- авторизацию пользователя
+- взаимодействие с элементами при помощи drag&drop
+- кастомную валидацию форм
+- взаимодействие с api
+- pc и mobile версии
 
-## Этапы работы:
+## Ссылка на проект
 
-1. Разверните проект и ознакомьтесь с кодом. Все необходимые вам компоненты уже созданы и лежат в папке `src/components`
+<a href="https://stellar-burgers-murex.vercel.app/" target="_blank">
+https://stellar-burgers-murex.vercel.app
+</a>
 
-2. Настройте роутинг.
+## Технологии
 
-3. Напишите функционал запросов данных с сервера, используя `Redux` и глобальный `store`. Сами "ручки" уже прописаны и лежат в `utils/burger-api.ts`
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Redux](https://img.shields.io/badge/redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+![cypress](https://img.shields.io/badge/-cypress-%23E5E5E5?style=for-the-badge&logo=cypress&logoColor=058a5e)
 
-4. Настройте авторизацию и создайте защищённые роуты.
+## Инструкция по запуску
 
-## Важно:
+```bash
+git clone https://github.com/ArtemMazin/StellarBurgers.git
+npm install
+npm start
 
-Для корректной работы запросов к серверу необходимо добавить переменную BURGER_API_URL в окружение. Сама ссылка находится в файле `.env.example`
+//тесты
+npm run test
+npm run cypress
+
+//линтеры
+npm run stylelint
+npm run lint
+```
+
+![](src/images/preview.png)

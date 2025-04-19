@@ -1,0 +1,11 @@
+.components {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (width < 768px) {
+  .components {
+    gap: 0;
+  }
+}

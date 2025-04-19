@@ -1,3 +1,5 @@
+import { ChangeEvent } from 'react';
+
 export type TIngredient = {
   _id: string;
   name: string;
@@ -8,33 +10,52 @@ export type TIngredient = {
   calories: number;
   price: number;
   image: string;
-  image_large: string;
   image_mobile: string;
+  image_large: string;
+  __v: number;
+  customId: string;
 };
 
-export type TConstructorIngredient = TIngredient & {
-  id: string;
+export type THandleOverlay = (e: React.MouseEvent<HTMLElement>) => void;
+
+export type TInputProps = {
+  icon?: 'EditIcon' | 'ShowIcon' | 'HideIcon' | 'CloseIcon';
+  isIcon?: boolean;
+  handleInput: (e: ChangeEvent<HTMLInputElement>, regExp: RegExp, error: string) => void;
+  value: string;
+  error: string;
+  inputValid: boolean;
+  placeholder?: string;
 };
 
-export type TOrder = {
-  _id: string;
-  status: string;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-  number: number;
-  ingredients: string[];
-};
-
-export type TOrdersData = {
-  orders: TOrder[];
-  total: number;
-  totalToday: number;
+export type TLoginSuccess = {
+  success: boolean;
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    email: string;
+    name: string;
+  };
 };
 
 export type TUser = {
   email: string;
   name: string;
+  password: string;
 };
 
-export type TTabMode = 'bun' | 'sauce' | 'main';
+export enum WebsocketStatus {
+  CONNECTING = 'CONNECTING...',
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE',
+}
+
+export type TOrder = {
+  ingredients: string[];
+  _id: string;
+  status: string;
+  name: string;
+  number: number;
+  createdAt: string;
+  updatedAt: string;
+};
