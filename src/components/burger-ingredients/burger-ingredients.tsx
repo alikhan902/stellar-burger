@@ -1,65 +1,71 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Tabs from './tabs/tabs';
-import Ingredients from './ingredients/ingredients';
-import { BUNS } from '@/utils/tabs-config';
-import useStatus from '@/hooks/useStatus';
-import Preloader from '../preloader/preloader';
-import { errorIngredients, statusIngredients } from '@/services/initial-ingredients/selectors';
-import { getIngredients } from '@/services/initial-ingredients/initial-ingredients-slice';
-import { toast } from 'react-toastify';
-import { loadState } from '@/localstorage';
-import { useResize } from '@/hooks/useResize';
-import styles from './burger-ingredients.module.css';
-import { useAppDispatch, useAppSelector } from '@/redux-hooks';
+import { useState, useRef, useEffect, FC } from 'react';
+import { useInView } from 'react-intersection-observer';
 
-function BurgerIngredients() {
-  const [activeTab, setActiveTab] = useState<string>(BUNS);
-  const status = useAppSelector(statusIngredients);
-  const error = useAppSelector(errorIngredients);
-  const { isMobile } = useResize();
+import { TIngredient, TTabMode } from '@utils-types';
+import { BurgerIngredientsUI } from '../ui/burger-ingredients';
+import { useSelector } from '../../services/store';
 
-  const dispatch = useAppDispatch();
+export const BurgerIngredients: FC = () => {
+  const ingredients = useSelector((store) => store.store.ingredients);
 
-  useEffect(() => {
-    if (loadState() === undefined || error) {
-      dispatch(getIngredients())
-        .unwrap()
-        .catch((err: unknown) => {
-          if (err instanceof Error) {
-            toast.error(err.message);
-          }
-        });
-    }
-  }, [dispatch, error]);
+  const buns: TIngredient[] = ingredients.filter((item) => item.type === 'bun');
+  const mains: TIngredient[] = ingredients.filter(
+    (item) => item.type === 'main'
+  );
+  const sauces: TIngredient[] = ingredients.filter(
+    (item) => item.type === 'sauce'
+  );
 
-  const handleTab = (tabName: string) => {
-    setActiveTab(tabName);
-  };
-  const tabsRef = useRef<HTMLDivElement>(null);
+  const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
+  const titleBunRef = useRef<HTMLHeadingElement>(null);
+  const titleMainRef = useRef<HTMLHeadingElement>(null);
+  const titleSaucesRef = useRef<HTMLHeadingElement>(null);
 
-  const content = useStatus({
-    loading: (
-      <div className="mt-30">
-        <Preloader />
-      </div>
-    ),
-    content: <Ingredients tabsRef={tabsRef} handleTab={handleTab} activeTab={activeTab} />,
-    status,
+  const [bunsRef, inViewBuns] = useInView({
+    threshold: 0
   });
 
-  return (
-    <section>
-      <h1
-        className={`text text_type_main-large ${styles.title} ${
-          isMobile ? 'pt-4 pb-2' : 'pt-10 pb-5'
-        }`}
-      >
-        Соберите бургер
-      </h1>
-      <Tabs ref={tabsRef} handleTab={handleTab} activeTab={activeTab} />
-      {content}
-    </section>
-  );
-}
+  const [mainsRef, inViewFilling] = useInView({
+    threshold: 0
+  });
 
-export default BurgerIngredients;
+  const [saucesRef, inViewSauces] = useInView({
+    threshold: 0
+  });
+
+  useEffect(() => {
+    if (inViewBuns) {
+      setCurrentTab('bun');
+    } else if (inViewSauces) {
+      setCurrentTab('sauce');
+    } else if (inViewFilling) {
+      setCurrentTab('main');
+    }
+  }, [inViewBuns, inViewFilling, inViewSauces]);
+
+  const onTabClick = (tab: string) => {
+    setCurrentTab(tab as TTabMode);
+    if (tab === 'bun')
+      titleBunRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'main')
+      titleMainRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (tab === 'sauce')
+      titleSaucesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <BurgerIngredientsUI
+      currentTab={currentTab}
+      buns={buns}
+      mains={mains}
+      sauces={sauces}
+      titleBunRef={titleBunRef}
+      titleMainRef={titleMainRef}
+      titleSaucesRef={titleSaucesRef}
+      bunsRef={bunsRef}
+      mainsRef={mainsRef}
+      saucesRef={saucesRef}
+      onTabClick={onTabClick}
+    />
+  );
+};

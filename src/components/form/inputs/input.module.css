@@ -1,6 +1,0 @@
-@media (width < 768px) {
-  .input > div {
-    width: 304px;
-    box-sizing: border-box;
-  }
-}
