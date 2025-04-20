@@ -24,4 +24,8 @@ jobs:
         run: npm run lint
 
       - name: Format
+<<<<<<< HEAD
         run: npm run format:check
+=======
+        run: npm run format:check
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235

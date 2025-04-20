@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 // Constants for mock data
 const mockFeed = {
+=======
+import { fetchFeed } from '../src/slices/storeSlice';
+import reducer, { initialState } from '../src/slices/storeSlice';
+
+export const mockFeed = {
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
   orders: [
     {
       _id: '1234',
@@ -20,7 +27,10 @@ describe('Feed reducer test', () => {
     expect(state.isLoading).toBeTruthy();
     expect(state.error).toBeFalsy();
   });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
   test('Success', () => {
     const state = reducer(
       initialState,
@@ -30,7 +40,10 @@ describe('Feed reducer test', () => {
     expect(state.total).toEqual(mockFeed.total);
     expect(state.totalToday).toEqual(mockFeed.totalToday);
   });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
   test('Failed', () => {
     const state = reducer(
       initialState,

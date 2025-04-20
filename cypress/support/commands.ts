@@ -34,4 +34,8 @@
 //       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
 //     }
 //   }
+<<<<<<< HEAD
 // }
+=======
+// }
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235

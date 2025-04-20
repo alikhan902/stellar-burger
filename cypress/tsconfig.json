@@ -4,5 +4,13 @@
     "noEmit": true,
     "types": ["cypress"]
   },
+<<<<<<< HEAD
   "include": ["../node_modules/cypress", "./**/*.ts"]
 }
+=======
+  "include": [
+    "../node_modules/cypress",
+    "./**/*.ts"
+  ]
+}
+>>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
