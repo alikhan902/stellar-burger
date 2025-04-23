@@ -1,8 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-<<<<<<< HEAD
 import { v4 as uuidv4 } from 'uuid';
-=======
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
 import {
   getIngredientsApi,
   getOrdersApi,
@@ -17,7 +14,6 @@ import {
 } from '@api';
 import { TIngredient, TOrder } from '../utils/types';
 
-<<<<<<< HEAD
 // Константы для повторяющихся строк
 const INGREDIENTS_PATH = 'ingredients/getAll';
 const ORDERS_PATH = 'orders/createOrder';
@@ -30,8 +26,6 @@ const LOGOUT_PATH = 'user/logout';
 const UPDATE_PATH = 'user/update';
 const RESET_PASSWORD_PATH = 'user/resetPassword';
 
-=======
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
 interface StoreState {
   isLoading: boolean;
   ingredients: TIngredient[];
@@ -80,7 +74,6 @@ export const initialState: StoreState = {
   error: undefined
 };
 
-<<<<<<< HEAD
 // Асинхронные действия
 export const fetchIngredients = createAsyncThunk(
   INGREDIENTS_PATH,
@@ -99,55 +92,18 @@ export const logOutUser = createAsyncThunk(LOGOUT_PATH, logoutApi);
 export const updateUser = createAsyncThunk(UPDATE_PATH, updateUserApi);
 export const resetPassword = createAsyncThunk(
   RESET_PASSWORD_PATH,
-=======
-export const fetchIngredients = createAsyncThunk(
-  'ingredients/getAll',
-  getIngredientsApi
-);
-export const createNewOrder = createAsyncThunk(
-  'orders/createOrder',
-  orderBurgerApi
-);
-export const fetchUsersOrders = createAsyncThunk('user/orders', getOrdersApi);
-export const fetchFeed = createAsyncThunk('user/feed', getFeedsApi);
-export const getUser = createAsyncThunk('user/getUser', getUserApi);
-export const loginUser = createAsyncThunk('user/login', loginUserApi);
-export const registerNewUser = createAsyncThunk(
-  'user/register',
-  registerUserApi
-);
-export const logOutUser = createAsyncThunk('user/logout', logoutApi);
-export const updateUser = createAsyncThunk('user/update', updateUserApi);
-export const resetPassword = createAsyncThunk(
-  'user/resetPassword',
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
   resetPasswordApi
 );
 
 export const storeSlice = createSlice({
   name: 'store',
-<<<<<<< HEAD
   initialState,
-  reducers: {
-    addIngredient: (state, action) => {
-      const ingredient = action.payload;
-      if (ingredient.type === 'bun') {
-        state.constructorItems.bun = ingredient;
-      } else {
-        // Генерируем уникальный id для ингредиента
-        state.constructorItems.ingredients.push({
-          ...ingredient,
-          dragId: uuidv4()
-        });
-=======
-  initialState: initialState,
   reducers: {
     addIngredient: (state, action) => {
       if (action.payload.type === 'bun') {
         state.constructorItems.bun = action.payload;
       } else {
         state.constructorItems.ingredients.push(action.payload);
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       }
     },
     openModal: (state) => {
@@ -159,39 +115,21 @@ export const storeSlice = createSlice({
     moveItemUp: (state, action) => {
       const index = action.payload;
       if (index > 0) {
-<<<<<<< HEAD
-        const ingredients = [...state.constructorItems.ingredients];
-        [ingredients[index], ingredients[index - 1]] = [
-          ingredients[index - 1],
-          ingredients[index]
-        ];
-        state.constructorItems.ingredients = ingredients;
-=======
         state.constructorItems.ingredients.splice(
           index - 1,
           0,
           state.constructorItems.ingredients.splice(index, 1)[0]
         );
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       }
     },
     moveItemDown: (state, action) => {
       const index = action.payload;
       if (index < state.constructorItems.ingredients.length - 1) {
-<<<<<<< HEAD
-        const ingredients = [...state.constructorItems.ingredients];
-        [ingredients[index], ingredients[index + 1]] = [
-          ingredients[index + 1],
-          ingredients[index]
-        ];
-        state.constructorItems.ingredients = ingredients;
-=======
         state.constructorItems.ingredients.splice(
           index + 1,
           0,
           state.constructorItems.ingredients.splice(index, 1)[0]
         );
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       }
     },
     deleteItem: (state, action) => {
@@ -202,29 +140,16 @@ export const storeSlice = createSlice({
     },
     resetOrder: (state) => {
       state.constructorItems = {
-<<<<<<< HEAD
         bun: { price: 0 },
-=======
-        bun: {
-          price: 0
-        },
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
         ingredients: []
       };
       state.orderRequest = false;
       state.orderModalData = null;
     },
-<<<<<<< HEAD
-    init: (state) => {
-      state.isInit = true;
-    },
-    setError: (state, action) => {
-=======
     init(state) {
       state.isInit = true;
     },
     setError(state, action) {
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       state.error = action.payload;
     }
   },
@@ -245,38 +170,18 @@ export const storeSlice = createSlice({
     selectIsInit: (state) => state.isInit
   },
   extraReducers: (builder) => {
-<<<<<<< HEAD
-    const pendingHandler = (state: StoreState) => {
-      state.isLoading = true;
-      state.error = undefined;
-    };
-
-    const rejectedHandler = (state: StoreState, action: any) => {
-      state.isLoading = false;
-      state.error = action.error.message;
-    };
-
-    builder
-      .addCase(fetchIngredients.pending, pendingHandler)
-=======
     builder
       .addCase(fetchIngredients.pending, (state) => {
         state.isLoading = true;
       })
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       .addCase(fetchIngredients.fulfilled, (state, action) => {
         state.ingredients = action.payload;
         state.isLoading = false;
       })
-<<<<<<< HEAD
-      .addCase(fetchIngredients.rejected, rejectedHandler)
-
-=======
       .addCase(fetchIngredients.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       .addCase(createNewOrder.pending, (state) => {
         state.orderRequest = true;
       })
@@ -285,11 +190,6 @@ export const storeSlice = createSlice({
         state.orderModalData = action.payload.order;
         state.isLoading = false;
       })
-<<<<<<< HEAD
-      .addCase(createNewOrder.rejected, rejectedHandler)
-
-      .addCase(fetchFeed.pending, pendingHandler)
-=======
       .addCase(createNewOrder.rejected, (state, action) => {
         state.orderRequest = false;
         state.isLoading = false;
@@ -298,34 +198,12 @@ export const storeSlice = createSlice({
       .addCase(fetchFeed.pending, (state) => {
         state.isLoading = true;
       })
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       .addCase(fetchFeed.fulfilled, (state, action) => {
         state.isLoading = false;
         state.orders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
       })
-<<<<<<< HEAD
-      .addCase(fetchFeed.rejected, rejectedHandler)
-
-      .addCase(getUser.pending, pendingHandler)
-      .addCase(getUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-      })
-      .addCase(getUser.rejected, rejectedHandler)
-
-      .addCase(loginUser.pending, pendingHandler)
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-      })
-      .addCase(loginUser.rejected, rejectedHandler)
-
-      .addCase(fetchUsersOrders.pending, pendingHandler)
-=======
       .addCase(fetchFeed.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
@@ -358,24 +236,10 @@ export const storeSlice = createSlice({
       .addCase(fetchUsersOrders.pending, (state) => {
         state.isLoading = true;
       })
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       .addCase(fetchUsersOrders.fulfilled, (state, action) => {
         state.isLoading = false;
         state.userOrders = action.payload.orders;
       })
-<<<<<<< HEAD
-      .addCase(fetchUsersOrders.rejected, rejectedHandler)
-
-      .addCase(registerNewUser.pending, pendingHandler)
-      .addCase(registerNewUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.isAuthenticated = true;
-        state.user = action.payload.user;
-      })
-      .addCase(registerNewUser.rejected, rejectedHandler)
-
-      .addCase(logOutUser.pending, pendingHandler)
-=======
       .addCase(fetchUsersOrders.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
@@ -395,32 +259,11 @@ export const storeSlice = createSlice({
       .addCase(logOutUser.pending, (state) => {
         state.isLoading = true;
       })
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
       .addCase(logOutUser.fulfilled, (state) => {
         state.isLoading = false;
         state.isAuthenticated = false;
         state.user = { name: '', email: '' };
       })
-<<<<<<< HEAD
-      .addCase(logOutUser.rejected, rejectedHandler)
-
-      .addCase(resetPassword.pending, pendingHandler)
-      .addCase(resetPassword.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(resetPassword.rejected, rejectedHandler)
-
-      .addCase(updateUser.pending, pendingHandler)
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload.user;
-      })
-      .addCase(updateUser.rejected, rejectedHandler);
-  }
-});
-
-// Экспорт селекторов
-=======
       .addCase(logOutUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
@@ -449,7 +292,7 @@ export const storeSlice = createSlice({
   }
 });
 
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
+// Экспорт селекторов
 export const {
   selectIngredients,
   selectIsLoading,
@@ -466,11 +309,8 @@ export const {
   selectIsInit,
   selectError
 } = storeSlice.selectors;
-<<<<<<< HEAD
 
 // Экспорт действий
-=======
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235
 export const {
   addIngredient,
   openModal,
