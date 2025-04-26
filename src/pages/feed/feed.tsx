@@ -1,10 +1,32 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 
-export const Feed: FC = () =>
-  // if (!orders.length) {
-  //   return <Preloader />;
-  // }
+import { Preloader } from '@ui';
+import { useSelector, useDispatch } from '../../services/store';
+import {
+  getAllFeedsThunk,
+  ordersSelector
+} from '../../services/slices/feedSlice';
+import { FeedUI } from '@ui-pages';
+import { TOrder } from '@utils-types';
 
-  // return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
+export const Feed: FC = () => {
+  const dispatch = useDispatch();
+  const orders: TOrder[] = useSelector(ordersSelector);
 
-  null;
+  useEffect(() => {
+    dispatch(getAllFeedsThunk());
+  }, []);
+
+  if (!orders.length) {
+    return <Preloader />;
+  }
+
+  return (
+    <FeedUI
+      orders={orders}
+      handleGetFeeds={() => {
+        dispatch(getAllFeedsThunk());
+      }}
+    />
+  );
+};
