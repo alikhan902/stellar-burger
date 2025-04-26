@@ -1,81 +1,57 @@
+import { useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import {
   ConstructorPage,
-  Feed,
   ForgotPassword,
   Login,
+  NotFound404,
   Profile,
   ProfileOrders,
   Register,
   ResetPassword,
-  NotFound404
-} from '@pages';
-import { Modal, OrderInfo, IngredientDetails } from '@components';
+  Feed
+} from '../../pages';
+
+import {
+  AppHeader,
+  IngredientDetails,
+  Modal,
+  OrderInfo,
+  ProtectedRoute
+} from '@components';
+import { useDispatch, useSelector } from '../../services/store';
+import { getIngredientsThunk } from '../../services/slices/ingredientsSlice';
+import { getUserThunk } from '../../services/slices/userSlice';
+import { orderNumberSelector } from '../../services/slices/feedSlice';
 import '../../index.css';
 import styles from './app.module.css';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-
-import { AppHeader } from '@components';
-import { ProtectedRoute } from '../ProtectedRoute';
-import store, { useSelector } from '../../services/store';
-import {
-  fetchIngredients,
-  selectIsAuthenticated,
-  getUser,
-  init,
-  closeModal,
-  selectIsModalOpen,
-  setError
-} from '../../slices/storeSlice';
-import { useEffect } from 'react';
-import { getCookie, deleteCookie } from '../../utils/cookie';
-import { useLocation } from 'react-router-dom';
 
 const App = () => {
-  const dispatch = store.dispatch;
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = getCookie('accessToken');
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const isModalOpen = useSelector(selectIsModalOpen);
   const location = useLocation();
   const backgroundLocation = location.state?.background;
+  const orderNumber = useSelector(orderNumberSelector);
 
   useEffect(() => {
-    if (!isAuthenticated && token) {
-      dispatch(getUser())
-        .unwrap()
-        .then(() => {
-          dispatch(init());
-        })
-        .catch((e) => {
-          deleteCookie('accessToken');
-          console.error(e);
-          dispatch(init());
-          localStorage.removeItem('refreshToken');
-        });
-    } else {
-      dispatch(init());
-    }
+    dispatch(getIngredientsThunk());
+    dispatch(getUserThunk());
   }, []);
-
-  useEffect(() => {
-    dispatch(fetchIngredients());
-  }, []);
-
-  const handleClose = () => {
-    dispatch(closeModal());
-    navigate(-1);
-  };
 
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes location={backgroundLocation || location}>
+      <Routes location={backgroundLocation}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
         <Route
+          path='feed/:number'
+          element={<OrderInfo style={{ marginTop: 120 }} isModal={false} />}
+        />
+        <Route
           path='/login'
           element={
-            <ProtectedRoute notLoggedIn>
+            <ProtectedRoute onlyUnAuth>
               <Login />
             </ProtectedRoute>
           }
@@ -83,7 +59,7 @@ const App = () => {
         <Route
           path='/register'
           element={
-            <ProtectedRoute notLoggedIn>
+            <ProtectedRoute onlyUnAuth>
               <Register />
             </ProtectedRoute>
           }
@@ -91,7 +67,7 @@ const App = () => {
         <Route
           path='/forgot-password'
           element={
-            <ProtectedRoute notLoggedIn>
+            <ProtectedRoute onlyUnAuth>
               <ForgotPassword />
             </ProtectedRoute>
           }
@@ -99,7 +75,7 @@ const App = () => {
         <Route
           path='/reset-password'
           element={
-            <ProtectedRoute notLoggedIn>
+            <ProtectedRoute onlyUnAuth>
               <ResetPassword />
             </ProtectedRoute>
           }
@@ -120,60 +96,42 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path='*' element={<NotFound404 />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
         <Route
-          path='/profile/orders/:number'
+          path='/ingredients/:id'
           element={
-            <ProtectedRoute>
-              <ProfileOrders />
-            </ProtectedRoute>
+            <IngredientDetails title={'Детали ингредиента'} isModal={false} />
           }
         />
+        <Route
+          path='/profile/orders/:number'
+          element={<OrderInfo style={{ marginTop: 120 }} isModal={false} />}
+        />
+        <Route path='*' element={<NotFound404 />} />
       </Routes>
-
-      {isModalOpen && backgroundLocation && (
+      {backgroundLocation && (
         <Routes>
           <Route
             path='/feed/:number'
             element={
-              <Modal
-                title='Заказ'
-                onClose={() => {
-                  handleClose();
-                }}
-              >
-                <OrderInfo />
+              <Modal title={''} onClose={() => navigate(-1)}>
+                <OrderInfo isModal />
               </Modal>
             }
           />
           <Route
             path='/ingredients/:id'
             element={
-              <Modal
-                title='Детали ингредиента'
-                onClose={() => {
-                  handleClose();
-                }}
-              >
-                <IngredientDetails />
+              <Modal title={'Детали ингредиента'} onClose={() => navigate(-1)}>
+                <IngredientDetails isModal />
               </Modal>
             }
           />
           <Route
             path='/profile/orders/:number'
             element={
-              <ProtectedRoute>
-                <Modal
-                  title='Мой заказ'
-                  onClose={() => {
-                    handleClose();
-                  }}
-                >
-                  <OrderInfo personal />
-                </Modal>
-              </ProtectedRoute>
+              <Modal title={''} onClose={() => navigate(-1)}>
+                <OrderInfo isModal />
+              </Modal>
             }
           />
         </Routes>

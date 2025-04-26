@@ -7,27 +7,24 @@ import {
   CurrencyIcon,
   AddButton
 } from '@zlden/react-developer-burger-ui-components';
-import { useDispatch } from '../../../services/store';
 
 import { TBurgerIngredientUIProps } from './type';
-import { openModal } from '../../../slices/storeSlice';
 
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
-  ({ ingredient, count, handleAdd, locationState }) => {
+  ({ ingredient, count, handleAdd, locationState, index }) => {
     const { image, price, name, _id } = ingredient;
-    const dispatch = useDispatch();
-
-    const onClick = () => {
-      dispatch(openModal());
-    };
 
     return (
-      <li className={styles.container} data-cy={ingredient.type}>
+      <li
+        className={styles.container}
+        data-cy={
+          ingredient.type === 'bun' ? `bun_${index}` : `ingredient_${index}`
+        }
+      >
         <Link
           className={styles.article}
           to={`/ingredients/${_id}`}
           state={locationState}
-          onClick={onClick}
         >
           {count && <Counter count={count} />}
           <img className={styles.img} src={image} alt='картинка ингредиента.' />

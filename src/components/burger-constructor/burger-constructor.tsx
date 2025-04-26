@@ -1,52 +1,73 @@
 import { FC, useMemo } from 'react';
-import { TIngredient } from '@utils-types';
-import { BurgerConstructorUI } from '@ui';
-import { useSelector, useDispatch } from '../../services/store';
-import { RootState } from '../../services/store';
 import { useNavigate } from 'react-router-dom';
+import { TConstructorIngredient } from '@utils-types';
+import { BurgerConstructorUI } from '@ui';
+import { useDispatch, useSelector } from '../../services/store';
 import {
-  createNewOrder,
-  selectConstructorItems,
-  selectOrderRequest,
-  resetOrder
-} from '../../slices/storeSlice';
+  burgerAssemblerSelector,
+  clearburgerAssembler
+} from '../../services/slices/burgetAssemblerSlice';
+import {
+  clearOrder,
+  isOrderLoadingSelector,
+  orderBurgerThunk,
+  orderSelector
+} from '../../services/slices/orderSlice';
+import { isAuthCheckedSelector } from '../../services/slices/userSlice';
 
 export const BurgerConstructor: FC = () => {
-  const dispatch = useDispatch();
+  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
+  const constructorItems = useSelector(burgerAssemblerSelector);
+  const orderRequest = useSelector(isOrderLoadingSelector);
+  const orderModalData = useSelector(orderSelector);
   const navigate = useNavigate();
-  const constructorItems = useSelector(selectConstructorItems);
-  const orderRequest = useSelector(selectOrderRequest);
-  const orderModalData = useSelector(
-    (state: RootState) => state.store.orderModalData
-  );
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.store.isAuthenticated
-  );
+  const dispatch = useDispatch();
+  const isAuth = useSelector(isAuthCheckedSelector);
 
   const onOrderClick = () => {
-    if (!isAuthenticated) {
-      navigate('/login');
-      return;
-    }
-    if (constructorItems.bun && constructorItems.bun._id) {
-      dispatch(
-        createNewOrder([
-          constructorItems.bun._id,
-          ...constructorItems.ingredients.map((item) => item._id),
-          constructorItems.bun._id
-        ])
-      );
+    const handleNavigation = () => {
+      if (!isAuth) {
+        navigate('/login');
+        return false;
+      }
+      return true;
+    };
+
+    const isOrderValid = () => {
+      if (!constructorItems.bun || orderRequest) {
+        return false;
+      }
+      return true;
+    };
+
+    if (handleNavigation() && isOrderValid()) {
+      const { bun, ingredients } = constructorItems;
+      if (!constructorItems.bun || orderRequest) return;
+      const orderData: string[] = [
+        bun?._id!,
+        ...ingredients.map((ingredient) => ingredient._id),
+        bun?._id!
+      ];
+
+      const createOrder = async () => {
+        await dispatch(orderBurgerThunk(orderData));
+        dispatch(clearburgerAssembler());
+      };
+      createOrder();
     }
   };
+
   const closeOrderModal = () => {
-    dispatch(resetOrder());
+    navigate('/', { replace: true });
+    dispatch(clearOrder());
+    dispatch(clearburgerAssembler());
   };
 
   const price = useMemo(
     () =>
-      (constructorItems.bun ? constructorItems.bun.price! * 2 : 0) +
+      (constructorItems.bun ? constructorItems.bun.price * 2 : 0) +
       constructorItems.ingredients.reduce(
-        (s: number, v: TIngredient) => s + v.price,
+        (s: number, v: TConstructorIngredient) => s + v.price,
         0
       ),
     [constructorItems]

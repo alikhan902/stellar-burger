@@ -1,22 +1,17 @@
 import { FC } from 'react';
-import { redirect, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ProfileMenuUI } from '@ui';
 import { useDispatch } from '../../services/store';
-import { deleteCookie } from '../../utils/cookie';
-import { logOutUser } from '../../slices/storeSlice';
+import { logoutUserThunk } from '../../services/slices/userSlice';
 
 export const ProfileMenu: FC = () => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logOutUser())
-      .unwrap()
-      .then(() => {
-        localStorage.removeItem('refreshToken');
-        deleteCookie('accessToken');
-      });
-    redirect('/');
+    dispatch(logoutUserThunk());
+    navigate('/');
   };
 
   return <ProfileMenuUI handleLogout={handleLogout} pathname={pathname} />;

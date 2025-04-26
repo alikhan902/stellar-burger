@@ -3,25 +3,22 @@ import { useNavigate } from 'react-router-dom';
 
 import { resetPasswordApi } from '@api';
 import { ResetPasswordUI } from '@ui-pages';
-import { useForm } from '../../hooks/useForm';
-import { useDispatch, useSelector } from '../../services/store';
-import { setError, selectError } from '../../slices/storeSlice';
 
 export const ResetPassword: FC = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const error = useSelector(selectError);
-  const { values, handleChange } = useForm({ password: '', token: '' });
+  const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
+  const [error, setError] = useState<Error | null>(null);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    resetPasswordApi({ password: values.password, token: values.token })
+    setError(null);
+    resetPasswordApi({ password, token })
       .then(() => {
         localStorage.removeItem('resetPassword');
         navigate('/login');
-        dispatch(setError(''));
       })
-      .catch((err) => dispatch(setError(err.message)));
+      .catch((err) => setError(err));
   };
 
   useEffect(() => {
@@ -32,11 +29,11 @@ export const ResetPassword: FC = () => {
 
   return (
     <ResetPasswordUI
-      errorText={error}
-      password={values.password}
-      token={values.token}
-      setPassword={handleChange}
-      setToken={handleChange}
+      errorText={error?.message}
+      password={password}
+      token={token}
+      setPassword={setPassword}
+      setToken={setToken}
       handleSubmit={handleSubmit}
     />
   );

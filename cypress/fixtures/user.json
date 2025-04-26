@@ -1,11 +1,7 @@
 {
   "success": true,
   "user": {
-    "email": "test@example.com",
-    "name": "test"
+    "email": "test@mail.ru",
+    "name": "testname"
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 3bb5da954f60b8a8781a98c2ae498e087130c235

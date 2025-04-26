@@ -1,15 +1,14 @@
 import { FC, memo } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { useDispatch } from '../../services/store';
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
-import { useDispatch } from '../../services/store';
-import { addIngredient } from '../../slices/storeSlice';
+import { addIngredient } from '../../services/slices/burgetAssemblerSlice';
 
 export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
-  ({ ingredient, count }) => {
-    const location = useLocation();
+  ({ ingredient, count, index }) => {
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const handleAdd = () => {
       dispatch(addIngredient(ingredient));
@@ -21,6 +20,7 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
         count={count}
         locationState={{ background: location }}
         handleAdd={handleAdd}
+        index={index}
       />
     );
   }

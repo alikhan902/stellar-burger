@@ -1,53 +1,42 @@
-import { FC, SyntheticEvent, useEffect } from 'react';
-import { LoginUI } from '@ui-pages';
-import { useDispatch } from '../../services/store';
+import { FC, SyntheticEvent, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 import {
-  selectError,
-  loginUser,
-  setError,
-  getUser
-} from '../../slices/storeSlice';
-import { useSelector } from '../../services/store';
-import { setCookie } from '../../utils/cookie';
-import { useForm } from '../../hooks/useForm';
+  clearErrors,
+  errorSelector,
+  loginUserThunk
+} from '../../services/slices/userSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import { LoginUI } from '@ui-pages';
 
 export const Login: FC = () => {
-  const { values, handleChange } = useForm({
-    email: '',
-    password: ''
-  });
   const dispatch = useDispatch();
+  const error = useSelector(errorSelector);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const error = useSelector(selectError);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const { from } = location.state || { from: { pathname: '/' } };
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
-    if (!values.email || !values.password) {
-      dispatch(setError('Необходимо заполнить все поля'));
-      return;
-    }
-    dispatch(loginUser({ email: values.email, password: values.password }))
-      .unwrap()
-      .then((res) => {
-        localStorage.setItem('refreshToken', res.refreshToken);
-        setCookie('accessToken', res.accessToken);
-        dispatch(getUser());
-        dispatch(setError(''));
-      })
-      .catch((err) => dispatch(setError(err.message)));
+    dispatch(loginUserThunk({ email, password }));
+    navigate(from.pathname, { replace: true });
   };
 
   useEffect(() => {
-    dispatch(setError(''));
-  }, [location]);
+    dispatch(clearErrors());
+  }, []);
 
   return (
     <LoginUI
-      errorText={error}
-      email={values.email}
-      setEmail={handleChange}
-      password={values.password}
-      setPassword={handleChange}
+      errorText={error!}
+      email={email}
+      password={password}
+      setEmail={setEmail}
+      setPassword={setPassword}
       handleSubmit={handleSubmit}
     />
   );

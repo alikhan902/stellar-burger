@@ -1,24 +1,19 @@
-import { ProfileOrdersUI } from '@ui-pages';
-import { TOrder } from '@utils-types';
 import { FC, useEffect } from 'react';
-import { useSelector } from '../../services/store';
-import { selectUserOrders, fetchUsersOrders } from '../../slices/storeSlice';
-import { useDispatch } from '../../services/store';
-import { useLocation } from 'react-router-dom';
-import { Preloader } from '@ui';
+
+import { ProfileOrdersUI } from '@ui-pages';
+import {
+  userOrdersSelector,
+  getOrdersThunk
+} from '../../services/slices/userSlice';
+import { useDispatch, useSelector } from '../../services/store';
+import { TOrder } from '@utils-types';
 
 export const ProfileOrders: FC = () => {
-  const orders: TOrder[] = useSelector(selectUserOrders);
   const dispatch = useDispatch();
-  const location = useLocation();
-
+  const orders: TOrder[] = useSelector(userOrdersSelector);
   useEffect(() => {
-    dispatch(fetchUsersOrders());
-  }, [location]);
-
-  if (!orders.length) {
-    return <Preloader />;
-  }
+    dispatch(getOrdersThunk());
+  }, []);
 
   return <ProfileOrdersUI orders={orders} />;
 };
